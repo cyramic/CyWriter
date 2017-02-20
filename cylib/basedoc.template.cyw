@@ -1,0 +1,40 @@
+<Document>
+	<Options>
+		<Option type="language"></Option>
+	</Options>
+	<Meta>
+		<Title></Title>
+		<Author></Author>
+		<Created></Created>
+		<Dates>
+			<DateStyle>CE</DateStyle>
+			<DateFormat>YYYY-MM-DD HH:MM:SS</DateFormat>
+		</Dates>
+	</Meta>
+	<Chapters>
+		<Chapter id="1" sortOrder="1">
+			<Title>
+				Test
+			</Title>
+			<Summary>
+			</Summary>
+			<Content>
+				<Text timestamp="" active="True">
+					Hi
+				</Text>
+			</Content>
+			<startTime>
+				
+			</startTime>
+			<endTime>
+				
+			</endTime>
+		</Chapter>
+	</Chapters>
+	<Characters>
+	</Characters>
+	<Setting>
+	</Setting>
+	<Research>
+	</Research>
+</Document>
