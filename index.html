@@ -113,6 +113,11 @@
 		<script src="./lib/cywriter.js">
 		</script>
 		<script>
+			var websocket = require('faye-websocket');
+
+			var address = 'ws://127.0.0.1:12345';
+			var socket = new websocket.Client(address);
+
 			var updateText = function(text) {
 				//document.getElementById.innerHTML = marked(text);
 				$(tinymce.get("documenttext").getBody()).html(text);
@@ -120,11 +125,40 @@
 
 			new QWebChannel(qt.webChannelTransport,
 				function(channel) {
-					var content = channel.objects.bridge;
+					var content = channel.objects.doceditor;
 				  	updateText(content.text);
 				  	content.textChanged.connect(updateText);
 				}
-			  );
+			);
+
+			// Below taken from http://code.qt.io/cgit/qt/qtwebchannel.git/tree/examples/webchannel/nodejs/chatclient.js?id=1383c5e31c3eeef420e4753f9753f281d3814428
+			socket.on('open', function(event) {
+				console.log("info: Client connected");
+				var transport = {
+					// We cant't do 'send: socket.send' here
+					// because 'send' wouldn't be bound to 'socket'
+					send: function(data) {socket.send(data)}
+				};
+
+				createWebChannel(transport, createReadlineInterface());
+
+				// QWebChannel has set up its onmessage handler
+				// on the transport in the constructor.
+				// Now we connect it to the websocket event.
+				socket.on('message', function(event) {
+					transport.onmessage(event);
+				});
+			});
+
+			socket.on('error', function (error) {
+				console.log('Connection error: ' + error.message);
+				process.exit(1);
+			});
+
+			socket.on('close', function () {
+				console.log('Connection closed.');
+				process.exit(1);
+			});
 		</script>
 	</body>
 </html>

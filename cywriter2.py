@@ -117,7 +117,7 @@ class FormWidget(QWidget):
         self.browser.setPage(self.webpage)
         self.channel = QWebChannel(self.webpage)
         self.webpage.setWebChannel(self.channel)
-        self.channel.registerObject('bridge', self.webpage)
+        self.channel.registerObject('doceditor', self.channel)
         self.browser.load(QUrl('file:///home/family/Documents/Projects/CyWriter2/index.html'))
         #self.browser.page().mainFrame().javaScriptWindowObjectCleared.connect(self.populateJavaScriptWindowObject)
         #self.document = QTextEdit()
@@ -148,8 +148,9 @@ class FormWidget(QWidget):
 
     @pyqtSlot()
     def saveText(self):
-        frame = self.browser.page().mainFrame()
-        documentText = frame.findFirstElement('#documenttext')
+        #frame = self.browser.page().mainFrame()
+        #documentText = frame.findFirstElement('#documenttext')
+        documentText = self.browser.page().runJavaScript("$(tinyMCE.activeEditor.getContent({format : 'raw'}));")
         print(documentText)
 
     def openNewChapterDialog(self):
@@ -176,6 +177,7 @@ class FormWidget(QWidget):
 
         b1 = QPushButton("ok", d)
         b1.move(110, 75)
+
         #b1.clicked.connect(self.makeNewChapter(cname.text(), cnum.itemData(cnum.currentIndex())))
         d.setWindowTitle("New Chapter")
         d.setWindowModality(Qt.ApplicationModal)
@@ -235,7 +237,7 @@ class FormWidget(QWidget):
         print("Hi")
     #def getBounds(self):
     #    self.browser.page().runJavaScript("document.getElementById('document').innerHTML", callback)
-"""
+
 class MyServer(QObject):
     def __init__(self, parent):
         super(QObject, self).__init__(parent)
@@ -274,7 +276,7 @@ class MyServer(QObject):
             print("Disconnect")
             self.clients.remove(self.clientConnection)
             self.clientConnection.deleteLater()
-"""
+
 def callback(result):
     print("Callback: "+str(result))
 
@@ -283,7 +285,9 @@ def main():
     app = QApplication(sys.argv)    
     win = MainWindow()
     win.app = app
-    #win.startServer()
+    serverObject = QWebSocketServer('My Socket', QWebSocketServer.NonSecureMode)
+    win.server = MyServer(serverObject)
+    serverObject.closed.connect(app.quit)
     win.show()
     app.exec_()
 
