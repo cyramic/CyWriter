@@ -5,104 +5,12 @@
 		<link rel="stylesheet" type="text/css" href="./lib/cywriter.css">
 	</head>
 	<body>
-		<!--<nav class="navbar navbar-default" style="padding:0px; margin:0px;">
-			<div class="container-fluid" style="padding:0px; margin:0px;">
-				<!-- Collect the nav links, forms, and other content for toggling --
-				<div class="collapse navbar-collapse" style="padding:0px; margin:0px;">
-					<ul class="nav navbar-nav" style="padding:0px; margin:0px;">
-						<li class="dropdown" style="padding:0px; margin:0px; left:0px;">
-							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">File <span class="caret"></span></a>
-							<ul class="dropdown-menu">
-								<li><a href="#">New</a></li>
-								<li><a href="#">Open</a></li>
-								<li><a href="#">Save</a></li>
-								<li><a href="#">Quit</a></li>
-							</ul>
-						</li>
-						<li class="dropdown">
-							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Edit <span class="caret"></span></a>
-							<ul class="dropdown-menu">
-								<li><a href="#" data-toggle="modal" data-target="#newchaptermodal">Copy</a></li>
-								<li><a href="#" data-toggle="modal" data-target="#newchaptermodal">Paste</a></li>
-								<li><a href="#" data-toggle="modal" data-target="#newchaptermodal">Cut</a></li>
-							</ul>
-						</li>
-						<li class="dropdown">
-							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Document <span class="caret"></span></a>
-							<ul class="dropdown-menu">
-								<li><a href="#" data-toggle="modal" data-target="#newchaptermodal">New Chapter</a></li>
-								<li><a href="#" data-toggle="modal" data-target="#">Chapter Organiser</a></li>
-							</ul>
-						</li>
-						<li class="dropdown">
-							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Plot <span class="caret"></span></a>
-							<ul class="dropdown-menu" role="menu">
-								<li class="dropdown-submenu">
-									<a href="#">Character <span class="caret"></span></a>
-									<ul class="dropdown-menu">
-										<li><a href="#" data-toggle="modal" data-target="#">Character Grid</a></li>
-										<li><a href="#" data-toggle="modal" data-target="#">Relationship Tree</a></li>
-									</ul>
-								</li>
-								<li><a href="#" data-toggle="modal" data-target="#">Scratchpad</a></li>
-								<li><a href="#" data-toggle="modal" data-target="#">Timeline</a></li>
-							</ul>
-						</li>
-						<li class="dropdown">
-							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Setting <span class="caret"></span></a>
-							<ul class="dropdown-menu">
-								<li><a href="#" data-toggle="modal" data-target="#">Locations</a></li>
-								<li><a href="#" data-toggle="modal" data-target="#">Location Grid</a></li>
-							</ul>
-						</li>
-					</ul>
-					<ul class="nav navbar-nav navbar-right">
-						<li class="dropdown">
-							<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-haspopup="true" aria-expanded="false">Help <span class="caret"></span></a>
-							<ul class="dropdown-menu">
-								<li><a href="#">Action</a></li>
-								<li><a href="#">Another action</a></li>
-								<li><a href="#">Something else here</a></li>
-								<li role="separator" class="divider"></li>
-								<li><a href="#">Separated link</a></li>
-							</ul>
-						</li>
-					</ul>
-				</div><!-- /.navbar-collapse 
-			</div><!-- /.container-fluid 
-		</nav>-->
+		<!--<button onClick="sendText()">Click Me</button>-->
 		<div id="doc">
 			<textarea class="form-control" id="documenttext">
 			</textarea>
 		</div>
 		
-		<!--<div class="modal fade" tabindex="-1" role="dialog" id="newchaptermodal">
-			<div class="modal-dialog" role="document">
-				<div class="modal-content">
-					<div class="modal-header">
-						<button type="button" class="close" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-						<h4 class="modal-title">New Chapter</h4>
-					</div>
-					<div class="modal-body">
-						<div class="form-inline" style="padding-left:10px;">
-							<label for="newchaptertitle">Title:</label>
-							<input type="text" id="newchaptertitle" class="form-control" style="width:85%;"/>
-						</div>
-						<div class="form-inline" style="padding-left:10px;">
-							<label for="newchaptertitle">Insert Location:</label>
-							<select class="form-control">
-								<option>End of Document</option>
-								<!-- List all current chapters here 
-							</select>
-						</div>
-					</div>
-					<div class="modal-footer">
-						<button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
-						<button type="button" class="btn btn-primary">Save changes</button>
-					</div>
-				</div><!-- /.modal-content 
-			</div><!-- /.modal-dialog 
-		</div> /.modal -->
 		<script src="qrc:///qtwebchannel/qwebchannel.js"></script>
 		<script src="./lib/jquery.min.js">
 		</script>
@@ -112,53 +20,20 @@
 		</script>
 		<script src="./lib/cywriter.js">
 		</script>
-		<script>
-			var websocket = require('faye-websocket');
 
-			var address = 'ws://127.0.0.1:12345';
-			var socket = new websocket.Client(address);
-
-			var updateText = function(text) {
-				//document.getElementById.innerHTML = marked(text);
-				$(tinymce.get("documenttext").getBody()).html(text);
-			}
-
-			new QWebChannel(qt.webChannelTransport,
-				function(channel) {
-					var content = channel.objects.doceditor;
-				  	updateText(content.text);
-				  	content.textChanged.connect(updateText);
-				}
-			);
-
-			// Below taken from http://code.qt.io/cgit/qt/qtwebchannel.git/tree/examples/webchannel/nodejs/chatclient.js?id=1383c5e31c3eeef420e4753f9753f281d3814428
-			socket.on('open', function(event) {
-				console.log("info: Client connected");
-				var transport = {
-					// We cant't do 'send: socket.send' here
-					// because 'send' wouldn't be bound to 'socket'
-					send: function(data) {socket.send(data)}
-				};
-
-				createWebChannel(transport, createReadlineInterface());
-
-				// QWebChannel has set up its onmessage handler
-				// on the transport in the constructor.
-				// Now we connect it to the websocket event.
-				socket.on('message', function(event) {
-					transport.onmessage(event);
+		<script type="text/javascript">
+			function sendText() {
+				editortext = tinyMCE.activeEditor.getContent({format : 'raw'});
+				new QWebChannel(qt.webChannelTransport, function(channel) { 
+					channel.objects.bridge.print(editortext); 
 				});
-			});
+			} 
+		</script>
+		<script>
+			//var websocket = require('faye-websocket');
 
-			socket.on('error', function (error) {
-				console.log('Connection error: ' + error.message);
-				process.exit(1);
-			});
-
-			socket.on('close', function () {
-				console.log('Connection closed.');
-				process.exit(1);
-			});
+			//var address = 'ws://127.0.0.1:12345';
+			//var socket = new websocket.Client(address);
 		</script>
 	</body>
 </html>
