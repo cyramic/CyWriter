@@ -13,6 +13,37 @@ from PyQt5.QtWebChannel import *
 from lxml import etree
 from cylib import ui
 
+class DocumentServer(QObject):
+    def __init__(self,  parent=None):
+        super(QObject, self).__init__(parent)
+        self.server = QWebSocketServer('My Socket', QWebSocketServer.NonSecureMode)
+        if self.server.listen(QHostAddress.LocalHost, 1302):
+            print('Connected: '+self.server.serverName()+' : '+self.server.serverAddress().toString()+':'+str(self.server.serverPort()))
+        else:
+            print('error')
+        self.server.newConnection.connect(self.onNewConnection)
+
+        print(self.server.isListening())
+
+    def onNewConnection(self):
+        clientConnection = self.server.nextPendingConnection()
+        clientConnection.disconnected.connect(clientConnection.deleteLater)
+        print(self.sender())
+        print("inside")
+        clientConnection.textMessageReceived.connect(self.processTextMessage)
+        clientConnection.binaryMessageReceived.connect(self.processBinaryMessage)
+        #self.server.disconnect.connect(self.socketDisconnected)
+        self.server.disconnected.connect(self.socketDisconnected)
+
+    def processTextMessage(self,  message):
+        print(message)
+
+    def processBinaryMessage(self,  message):
+        print(message)
+
+    def socketDisconnected(self):
+        print('out')
+
 qwebchannel_js = QFile(':/qtwebchannel/qwebchannel.js')
 if not qwebchannel_js.open(QIODevice.ReadOnly):
     raise SystemExit(
@@ -73,6 +104,7 @@ class MainWindow(QMainWindow):
 class FormWidget(QWidget):
     def __init__(self, parent):
         super(FormWidget, self).__init__(parent)
+        self.server = DocumentServer()
         self.grid = QGridLayout()
         self.document = {"tree": None, "currentChapter": 1, "chapterCount": 1}
 
@@ -117,6 +149,7 @@ class FormWidget(QWidget):
         self.ctitle.setText(c1title.text.strip())
         self.document["currentChapter"] = chapterNumber
         self.toggleChapterButtons()
+        self.server.processTextMessage(c1text)
 
     def getPreviousChapter(self):
         chapter = self.document["currentChapter"] - 1
