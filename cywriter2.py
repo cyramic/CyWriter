@@ -15,6 +15,10 @@ from cylib import ui
 from DocumentServer import DocumentServer
 from SocketClient import SocketClient
 
+'''---------------------------
+SETUP QWEBCHANNEL
+This allows webchannel to be used on the client end of things (allows qwebchannel.js)
+---------------------------'''
 qwebchannel_js = QFile(':/qtwebchannel/qwebchannel.js')
 if not qwebchannel_js.open(QIODevice.ReadOnly):
     raise SystemExit(
@@ -31,6 +35,10 @@ def client_script():
     script.setRunsOnSubFrames(True)
     return script
 
+
+'''---------------------------
+Main controller for the QWebEngine Page
+---------------------------'''
 class WebPage(QWebEnginePage):
     def javaScriptConsoleMessage(self, level, msg, linenumber, source_id):
         try:
@@ -42,6 +50,11 @@ class WebPage(QWebEnginePage):
     def print(self, text):
         print('From JS:', text)
 
+'''---------------------------
+MAIN WINDOW
+This is the main window that opens when the
+application is run
+---------------------------'''
 class MainWindow(QMainWindow):
     def __init__(self, parent=None):
         super(MainWindow, self).__init__(parent)
@@ -52,6 +65,10 @@ class MainWindow(QMainWindow):
         self.setCentralWidget(_widget)
         self.initToolbar()
 
+    # ------------------------
+    # Toolbar Initialization
+    # This is in charge of the menus and menu items
+    # ------------------------
     def initToolbar(self):
         self.statusBar()
 
@@ -72,6 +89,12 @@ class MainWindow(QMainWindow):
         self.setWindowTitle('CyWriter')
         self.show()
 
+'''---------------------------
+FORM WIDGET
+This is in charge of setting up all of the
+items that appear in the main page and for
+the sending and retrieving of data
+---------------------------'''
 class FormWidget(QWidget):
     def __init__(self, parent):
         super(FormWidget, self).__init__(parent)
@@ -114,6 +137,9 @@ class FormWidget(QWidget):
 
         self.setLayout(self.grid)
 
+    # ------------------------
+    # Sets the currently active chapter and displays it in the view
+    # ------------------------
     def setChapter(self, chapterNumber):
         c1title = self.document["tree"].xpath("Chapters/Chapter[@sortOrder='" + str(chapterNumber) + "']/Title")[0]
         c1text = self.document["tree"].xpath(
@@ -123,21 +149,33 @@ class FormWidget(QWidget):
         self.toggleChapterButtons()
         print("sending chapter data...")
         #self.server.acceptError.connect(self.onAcceptError)
-        #self.server.newConnection.connect(self.onNewConnection)
+        #self.server.newConnectiond.connect(self.onNewConnection)
         #self.server.processTextMessage(c1text.text)
         self.socketclient.send_message(c1text.text)
 
+    # ------------------------
+    # Moves backwards one chapter
+    # ------------------------
     def getPreviousChapter(self):
         chapter = self.document["currentChapter"] - 1
         self.setChapter(chapter)
 
+    # ------------------------
+    # Moves forwards one chapter
+    # ------------------------
     def getNextChapter(self):
         chapter = self.document["currentChapter"] + 1
         self.setChapter(chapter)
 
+    #  ------------------------
+    # Opens a chapter list to choose a chapter to view
+    # ------------------------
     def showChapterList(self):
         print("Open chapter list here...")
 
+    # ------------------------
+    # Determines what navigation buttons are enabled
+    # ------------------------
     def toggleChapterButtons(self):
         self.nextbutton.setEnabled(True)
         self.prevbutton.setEnabled(True)
@@ -150,11 +188,17 @@ class FormWidget(QWidget):
             print("No next button")
             self.nextbutton.setEnabled(False)
 
+    # ------------------------
+    # Opens the template document
+    # ------------------------
     def openDocumentTemplate(self):
         self.document["tree"] = etree.parse("./cylib/basedoc.template.cyw")
         self.loadDocument()
         print(self.document)
 
+    # ------------------------
+    # Sets up a newly-opened document
+    # ------------------------
     def loadDocument(self):
         self.document["chapterCount"] = len(self.document["tree"].xpath("Chapters/Chapter"))
         self.setChapter(1)

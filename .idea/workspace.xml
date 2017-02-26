@@ -5,11 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="20768b86-0bc1-4a7e-a5f1-a8bd6619029d" name="Default" comment="">
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/DocumentServer.py" />
-      <change type="NEW" beforePath="" afterPath="$PROJECT_DIR$/SocketClient.py" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/.idea/workspace.xml" afterPath="$PROJECT_DIR$/.idea/workspace.xml" />
       <change type="MODIFICATION" beforePath="$PROJECT_DIR$/cywriter2.py" afterPath="$PROJECT_DIR$/cywriter2.py" />
-      <change type="MODIFICATION" beforePath="$PROJECT_DIR$/index.html" afterPath="$PROJECT_DIR$/index.html" />
     </list>
     <option name="EXCLUDED_CONVERTED_TO_IGNORED" value="true" />
     <option name="TRACKING_ENABLED" value="true" />
@@ -24,11 +21,11 @@
   <component name="ExecutionTargetManager" SELECTED_TARGET="default_target" />
   <component name="FileEditorManager">
     <leaf SIDE_TABS_SIZE_LIMIT_KEY="300">
-      <file leaf-file-name="cywriter2.py" pinned="false" current-in-tab="false">
+      <file leaf-file-name="cywriter2.py" pinned="false" current-in-tab="true">
         <entry file="file://$PROJECT_DIR$/cywriter2.py">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="0">
-              <caret line="0" column="0" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
+            <state relative-caret-position="335">
+              <caret line="215" column="0" lean-forward="true" selection-start-line="215" selection-start-column="0" selection-end-line="215" selection-end-column="0" />
               <folding>
                 <element signature="e#49#59#0" expanded="true" />
               </folding>
@@ -83,11 +80,11 @@
           </provider>
         </entry>
       </file>
-      <file leaf-file-name="index.html" pinned="false" current-in-tab="true">
+      <file leaf-file-name="index.html" pinned="false" current-in-tab="false">
         <entry file="file://$PROJECT_DIR$/index.html">
           <provider selected="true" editor-type-id="text-editor">
-            <state relative-caret-position="225">
-              <caret line="55" column="17" lean-forward="true" selection-start-line="55" selection-start-column="17" selection-end-line="55" selection-end-column="17" />
+            <state relative-caret-position="45">
+              <caret line="43" column="56" lean-forward="false" selection-start-line="43" selection-start-column="56" selection-end-line="43" selection-end-column="56" />
               <folding />
             </state>
           </provider>
@@ -160,6 +157,7 @@
       <find>processTextMessage</find>
       <find>process</find>
       <find>DocumentServer</find>
+      <find>client_scr</find>
     </findStrings>
   </component>
   <component name="Git.Settings">
@@ -177,8 +175,8 @@
         <option value="$PROJECT_DIR$/SocketServer.py" />
         <option value="$PROJECT_DIR$/DocumentServer.py" />
         <option value="$PROJECT_DIR$/SocketClient.py" />
-        <option value="$PROJECT_DIR$/cywriter2.py" />
         <option value="$PROJECT_DIR$/index.html" />
+        <option value="$PROJECT_DIR$/cywriter2.py" />
       </list>
     </option>
   </component>
@@ -486,7 +484,14 @@
       <option name="project" value="LOCAL" />
       <updated>1488060528503</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="Finally have the communication with websockets working so that data can be written and retrieved from the view.">
+      <created>1488151207877</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1488151207877</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="ToolWindowManager">
@@ -537,7 +542,8 @@
     <MESSAGE value="Added in WebSocket server in preparation for two-way communication between WebEngine and QT5/Python end of things." />
     <MESSAGE value="Have working 2-way connection with WebEngine now so I should be able to communicate with all widgets going forward.  Refactored base code, but lost a few features in the process.  Will need to re-add some of what was present in previous commit." />
     <MESSAGE value="Ammendment to try and communicate with HTML end over websocket server.  Not working yet, but progress made." />
-    <option name="LAST_COMMIT_MESSAGE" value="Ammendment to try and communicate with HTML end over websocket server.  Not working yet, but progress made." />
+    <MESSAGE value="Finally have the communication with websockets working so that data can be written and retrieved from the view." />
+    <option name="LAST_COMMIT_MESSAGE" value="Finally have the communication with websockets working so that data can be written and retrieved from the view." />
   </component>
   <component name="XDebuggerManager">
     <breakpoint-manager>
@@ -914,16 +920,6 @@
         </state>
       </provider>
     </entry>
-    <entry file="file://$PROJECT_DIR$/cywriter2.py">
-      <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="0">
-          <caret line="0" column="0" lean-forward="true" selection-start-line="0" selection-start-column="0" selection-end-line="0" selection-end-column="0" />
-          <folding>
-            <element signature="e#49#59#0" expanded="true" />
-          </folding>
-        </state>
-      </provider>
-    </entry>
     <entry file="file://$PROJECT_DIR$/lib/cywriter.js">
       <provider selected="true" editor-type-id="text-editor">
         <state relative-caret-position="75">
@@ -934,9 +930,19 @@
     </entry>
     <entry file="file://$PROJECT_DIR$/index.html">
       <provider selected="true" editor-type-id="text-editor">
-        <state relative-caret-position="225">
-          <caret line="55" column="17" lean-forward="true" selection-start-line="55" selection-start-column="17" selection-end-line="55" selection-end-column="17" />
+        <state relative-caret-position="45">
+          <caret line="43" column="56" lean-forward="false" selection-start-line="43" selection-start-column="56" selection-end-line="43" selection-end-column="56" />
           <folding />
+        </state>
+      </provider>
+    </entry>
+    <entry file="file://$PROJECT_DIR$/cywriter2.py">
+      <provider selected="true" editor-type-id="text-editor">
+        <state relative-caret-position="335">
+          <caret line="215" column="0" lean-forward="true" selection-start-line="215" selection-start-column="0" selection-end-line="215" selection-end-column="0" />
+          <folding>
+            <element signature="e#49#59#0" expanded="true" />
+          </folding>
         </state>
       </provider>
     </entry>
