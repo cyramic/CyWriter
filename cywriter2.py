@@ -12,37 +12,8 @@ from PyQt5.QtNetwork import *
 from PyQt5.QtWebChannel import *
 from lxml import etree
 from cylib import ui
-
-class DocumentServer(QObject):
-    def __init__(self,  parent=None):
-        super(QObject, self).__init__(parent)
-        self.server = QWebSocketServer('My Socket', QWebSocketServer.NonSecureMode)
-        if self.server.listen(QHostAddress.LocalHost, 1302):
-            print('Connected: '+self.server.serverName()+' : '+self.server.serverAddress().toString()+':'+str(self.server.serverPort()))
-        else:
-            print('error')
-        self.server.newConnection.connect(self.onNewConnection)
-
-        print(self.server.isListening())
-
-    def onNewConnection(self):
-        clientConnection = self.server.nextPendingConnection()
-        clientConnection.disconnected.connect(clientConnection.deleteLater)
-        print(self.sender())
-        print("inside")
-        clientConnection.textMessageReceived.connect(self.processTextMessage)
-        clientConnection.binaryMessageReceived.connect(self.processBinaryMessage)
-        #self.server.disconnect.connect(self.socketDisconnected)
-        self.server.disconnected.connect(self.socketDisconnected)
-
-    def processTextMessage(self,  message):
-        print(message)
-
-    def processBinaryMessage(self,  message):
-        print(message)
-
-    def socketDisconnected(self):
-        print('out')
+from DocumentServer import DocumentServer
+from SocketClient import SocketClient
 
 qwebchannel_js = QFile(':/qtwebchannel/qwebchannel.js')
 if not qwebchannel_js.open(QIODevice.ReadOnly):
@@ -104,9 +75,10 @@ class MainWindow(QMainWindow):
 class FormWidget(QWidget):
     def __init__(self, parent):
         super(FormWidget, self).__init__(parent)
-        self.server = DocumentServer()
         self.grid = QGridLayout()
         self.document = {"tree": None, "currentChapter": 1, "chapterCount": 1}
+
+        self.socketclient = SocketClient(self)
 
         self.ctitlelabel = QLabel('Chapter Title')
         self.ctitle = QLineEdit()
@@ -149,7 +121,11 @@ class FormWidget(QWidget):
         self.ctitle.setText(c1title.text.strip())
         self.document["currentChapter"] = chapterNumber
         self.toggleChapterButtons()
-        self.server.processTextMessage(c1text)
+        print("sending chapter data...")
+        #self.server.acceptError.connect(self.onAcceptError)
+        #self.server.newConnection.connect(self.onNewConnection)
+        #self.server.processTextMessage(c1text.text)
+        self.socketclient.send_message(c1text.text)
 
     def getPreviousChapter(self):
         chapter = self.document["currentChapter"] - 1
@@ -186,5 +162,10 @@ class FormWidget(QWidget):
 if __name__ == '__main__':
     app = QApplication(sys.argv)
     win = MainWindow()
+    #server = SocketServer()
+    win.form_widget.serverObject = QWebSocketServer('My Socket', QWebSocketServer.NonSecureMode)
+    win.form_widget.server = DocumentServer(win.form_widget.serverObject)
+    win.form_widget.serverObject.closed.connect(app.quit)
+
     win.show()
     app.exec_()
