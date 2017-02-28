@@ -12,6 +12,7 @@ from PyQt5.QtNetwork import *
 from PyQt5.QtWebChannel import *
 from lxml import etree
 from cylib import ui
+from cylib import document
 from DocumentServer import DocumentServer
 from SocketClient import SocketClient
 
@@ -100,7 +101,7 @@ class FormWidget(QWidget):
         super(FormWidget, self).__init__(parent)
         self.grid = QGridLayout()
         self.document = {"tree": None, "currentChapter": 1, "chapterCount": 1}
-
+        self.doc = document.Document()
         self.socketclient = SocketClient(self)
 
         self.ctitlelabel = QLabel('Chapter Title')
@@ -136,42 +137,60 @@ class FormWidget(QWidget):
         self.grid.addWidget(self.view, 2, 0, 6, 6)
 
         self.setLayout(self.grid)
+        self._dialog = None
 
     # ------------------------
     # Sets the currently active chapter and displays it in the view
     # ------------------------
     def setChapter(self, chapterNumber):
-        c1title = self.document["tree"].xpath("Chapters/Chapter[@sortOrder='" + str(chapterNumber) + "']/Title")[0]
-        c1text = self.document["tree"].xpath(
-            "Chapters/Chapter[@sortOrder='" + str(chapterNumber) + "']/Content/Text[@active='True']")[0]
-        self.ctitle.setText(c1title.text.strip())
-        self.document["currentChapter"] = chapterNumber
+        c1title = self.doc.getChapterTitle(chapterNumber)
+        c1text = self.doc.getChapterText(chapterNumber)
+        #c1title = self.document["tree"].xpath("Chapters/Chapter[@sortOrder='" + str(chapterNumber) + "']/Title")[0]
+        #c1text = self.document["tree"].xpath(
+        #   "Chapters/Chapter[@sortOrder='" + str(chapterNumber) + "']/Content/Text[@active='True']")[0]
+        self.ctitle.setText(c1title)
+
+        #self.document["currentChapter"] = chapterNumber
+        self.doc.currentChapter = chapterNumber
         self.toggleChapterButtons()
         print("sending chapter data...")
         #self.server.acceptError.connect(self.onAcceptError)
         #self.server.newConnectiond.connect(self.onNewConnection)
         #self.server.processTextMessage(c1text.text)
-        self.socketclient.send_message(c1text.text)
+        print(c1text)
+        self.socketclient.send_message(c1text)
 
     # ------------------------
     # Moves backwards one chapter
     # ------------------------
     def getPreviousChapter(self):
-        chapter = self.document["currentChapter"] - 1
+        chapter = self.doc.currentChapter - 1
+        #chapter = self.document["currentChapter"] - 1
         self.setChapter(chapter)
 
     # ------------------------
     # Moves forwards one chapter
     # ------------------------
     def getNextChapter(self):
-        chapter = self.document["currentChapter"] + 1
+        chapter = self.doc.currentChapter + 1
+        #chapter = self.document["currentChapter"] + 1
         self.setChapter(chapter)
 
     #  ------------------------
     # Opens a chapter list to choose a chapter to view
     # ------------------------
     def showChapterList(self):
-        print("Open chapter list here...")
+        if self._dialog is None:
+            self._dialog = QDialog(self)
+
+            clist = QComboBox(self._dialog)
+            grid = QGridLayout(self._dialog)
+
+            clist.InsertAtTop
+            grid.addWidget(clist)
+            self._dialog.setLayout(grid)
+            self._dialog.resize(200, 100)
+            self._dialog.show()
 
     # ------------------------
     # Determines what navigation buttons are enabled
@@ -180,11 +199,13 @@ class FormWidget(QWidget):
         self.nextbutton.setEnabled(True)
         self.prevbutton.setEnabled(True)
         print("Is current chapter >= chapter count?")
-        print(self.document)
-        if self.document["currentChapter"] == 1:
+        #print(self.document)
+        #if self.document["currentChapter"] == 1:
+        if self.doc.currentChapter == 1:
             self.prevbutton.setEnabled(False)
             print("No prev button")
-        if self.document["currentChapter"] >= self.document["chapterCount"]:
+        #if self.document["currentChapter"] >= self.document["chapterCount"]:
+        if self.doc.currentChapter >= self.doc.chapterCount:
             print("No next button")
             self.nextbutton.setEnabled(False)
 
@@ -192,15 +213,17 @@ class FormWidget(QWidget):
     # Opens the template document
     # ------------------------
     def openDocumentTemplate(self):
-        self.document["tree"] = etree.parse("./cylib/basedoc.template.cyw")
+        self.doc.tree = etree.parse("./cylib/basedoc.template.cyw")
+        #self.document["tree"] = etree.parse("./cylib/basedoc.template.cyw")
         self.loadDocument()
-        print(self.document)
+        #print(self.document)
 
     # ------------------------
     # Sets up a newly-opened document
     # ------------------------
     def loadDocument(self):
-        self.document["chapterCount"] = len(self.document["tree"].xpath("Chapters/Chapter"))
+        self.doc.chapterCount = self.doc.getChapterCount()
+        #self.document["chapterCount"] = len(self.document["tree"].xpath("Chapters/Chapter"))
         self.setChapter(1)
 
 if __name__ == '__main__':

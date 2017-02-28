@@ -35,11 +35,12 @@ class DocumentServer(QtCore.QObject):
         self.clients.append(self.clientConnection)
 
     def processTextFrame(self, frame, is_last_frame):
-        print("in processTextFrame")
-        print("\tFrame: {} ; is_last_frame: {}".format(frame, is_last_frame))
+        return
+        #print("in processTextFrame")
+        #print("\tFrame: {} ; is_last_frame: {}".format(frame, is_last_frame))
 
     def processTextMessage(self, message):
-        print("processTextMessage - message: {}".format(message))
+        #print("processTextMessage - message: {}".format(message))
         if self.clientConnection:
             for client in self.clients:
                 # if client!= self.clientConnection:
@@ -47,12 +48,12 @@ class DocumentServer(QtCore.QObject):
             # self.clientConnection.sendTextMessage(message)
 
     def processBinaryMessage(self, message):
-        print("b:",message)
+        #print("b:",message)
         if self.clientConnection:
             self.clientConnection.sendBinaryMessage(message)
 
     def socketDisconnected(self):
-        print("socketDisconnected")
+        #print("socketDisconnected")
         if self.clientConnection:
             self.clients.remove(self.clientConnection)
             self.clientConnection.deleteLater()
