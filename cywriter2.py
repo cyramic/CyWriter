@@ -186,7 +186,12 @@ class FormWidget(QWidget):
             clist = QComboBox(self._dialog)
             grid = QGridLayout(self._dialog)
 
-            clist.InsertAtTop
+            clistitems = self.doc.getChapterList()
+            clisttext = []
+            for c in clistitems:
+                clisttext.append(c.text.strip())
+            print(clisttext)
+            clist.insertItems(0, clisttext)
             grid.addWidget(clist)
             self._dialog.setLayout(grid)
             self._dialog.resize(200, 100)
